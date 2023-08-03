@@ -7,9 +7,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-import com.martheseladvier.interstellartravel.DatabaseInterface;
-import com.martheseladvier.interstellartravel.Database;
-import com.martheseladvier.interstellartravel.MockDatabase;
+
 public class AcceleratorDatabaseTest {
 
     @Test
