@@ -2,6 +2,8 @@ package com.martheseladvier.interstellartravel;
 import org.springframework.stereotype.Service;
 @Service
 public class TransferCost implements ITransferCost{
+    public static final int PERSONAL_PASSENGER_LIMIT = 4;
+    public static final int HTC_PASSENGER_LIMIT = 5;
     public double personalTransfer(int distance, int passengers, int parkingDays){
         return 0.0;
     }
