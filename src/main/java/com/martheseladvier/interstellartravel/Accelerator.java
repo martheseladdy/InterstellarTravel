@@ -3,16 +3,16 @@ import java.util.List;
 
 public class Accelerator {
 
-    public Accelerator(int id, String name, List<Connection> connections){
+    public Accelerator(String id, String name, List<Connection> connections){
         this.id = id;
         this.name = name;
         this.connections = connections;
     }
-    public int id;
+    public String id = "";
     public String name = "";
     public List<Connection> connections = null;
 
-    public int getId(){
+    public String getId(){
         return this.id;
     }
 
@@ -23,7 +23,7 @@ public class Accelerator {
     public List<Connection> getConnections(){
         return this.connections;
     }
-    public void setId(int id){
+    public void setId(String id){
         this.id= id;
     }
 
