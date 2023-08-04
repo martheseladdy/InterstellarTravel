@@ -2,11 +2,11 @@ package com.martheseladvier.interstellartravel;
 
 public interface ITransferCost {
 
-    public double personalTransfer(int distance, int passengers, int parkingDays);
+    public TransferInfo personalTransfer(TransferInfo personalTransfer);
 
-    public double htcTransfer(int distance, int passengers);
+    public TransferInfo htcTransfer(TransferInfo htcTransfer);
 
-    public TransferInfo cheapestTransfer(TransferInfo personal, TransferInfo htc);
+    public TransferInfo cheapestTransfer(int distance, Integer passengers, Integer parkingDays);
 
     public int numberOfTransfers(int passengers, String transportType);
 

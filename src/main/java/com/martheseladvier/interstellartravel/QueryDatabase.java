@@ -2,11 +2,20 @@ package com.martheseladvier.interstellartravel;
 import java.net.URI;
 import java.util.*;
 import java.io.Serializable;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
+
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
@@ -15,6 +24,7 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
     DynamoDbClient dynamo;
     Map<String, String> dictionary = new HashMap<>();
 
+    @Autowired
     public QueryDatabase(){
         setUp();
         makeDictionary();
@@ -23,21 +33,11 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
 
     public void setUp(){
 
-        try {
-
-            String scriptPath = "/create-local-db.sh";
-            Process process = Runtime.getRuntime().exec("bash " + scriptPath);
-
-            int exitCode = process.waitFor();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        DynamoDbClient dynamo = DynamoDbClient.builder()
+        dynamo = DynamoDbClient.builder()
                 .endpointOverride(URI.create("http://localhost:8000"))
+                .region(Region.EU_WEST_1)
+                .credentialsProvider(() -> AwsBasicCredentials.create("dummy", "dummy"))
                 .build();
-        makeDictionary();
 
     }
 
