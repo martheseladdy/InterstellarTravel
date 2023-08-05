@@ -76,9 +76,9 @@ public class API {
 
     @GetMapping("/accelerators/{acceleratorID}")
     public String getAcceleratorByID(
-            @PathVariable String id    ){
+            @PathVariable String acceleratorID){
 
-        Accelerator accelerator = queryDatabase.getAccelerator(id);
+        Accelerator accelerator = queryDatabase.getAccelerator(acceleratorID);
 
         String response = "Accelerator: \nid: " +accelerator.getId() + "\nname: " + accelerator.getName() + "\nConnections: ";
         List<Connection> connections = accelerator.getConnections();
@@ -102,10 +102,10 @@ public class API {
     @GetMapping("/accelerators/{acceleratorID}/to/{targetAcceleratorID}")
 
     public String getCheapestRoute(
-            @PathVariable String fromId,
-            @PathVariable String toId){
-        Accelerator from = queryDatabase.getAccelerator(fromId);
-        Accelerator to = queryDatabase.getAccelerator(toId);
+            @PathVariable String acceleratorID,
+            @PathVariable String id){
+        Accelerator from = queryDatabase.getAccelerator(id);
+        Accelerator to = queryDatabase.getAccelerator(id);
         route.shortestRoute(from, to);
 
         List<String> routeAccelerators = route.getRoute();
