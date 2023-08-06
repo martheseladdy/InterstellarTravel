@@ -100,19 +100,33 @@ public class AcceleratorAPI {
         try {
             Accelerator from = queryDatabase.getAccelerator(acceleratorID.toUpperCase());
             Accelerator to = queryDatabase.getAccelerator(targetAcceleratorID.toUpperCase());
+            String response = "";
+            List<String> routeAccelerators = null;
 
-            List<String> routeAccelerators = route.getRoute(from, to);
             //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return a route list
 
-            String response = "START > ";
-            for (String accelerator : routeAccelerators) {
-                response += accelerator + " > ";
-            }
-            response += "FINISH\n\n";
-            String currency = format("%.2f", route.getCost());
-            response += "The cost of this journey is £" + currency + "\n\nThank you for using our service, have a lovely trip.";
+            for(int i = 0; i < 2; i++){
+                if(i == 0){
+                    routeAccelerators = route.getRoute(from, to);
+                    response += "Outbound:\n\n ";
+                }
+                else if (i == 1){
+                    routeAccelerators = route.getRoute(to, from);
+                    response += "Inbound:\n\n ";
+                }
+                response += "START > ";
+                for (String accelerator : routeAccelerators) {
+                    response += accelerator + " > ";
+                }
+                response += "FINISH\n\n";
+                String currency = format("%.2f", route.getCost());
+                response += "The cost of this journey is £" + currency + "\n\n";
 
+
+            }
+            response += "Thank you for using our service, have a lovely trip.";
             return response;
+
         }
         catch (Exception e){
             return "Error: " + e.toString();
