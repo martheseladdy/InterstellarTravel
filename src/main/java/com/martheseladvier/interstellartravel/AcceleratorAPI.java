@@ -9,39 +9,17 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/home")
-public class API {
+@RequestMapping("/UTS")
+public class AcceleratorAPI {
     //http://localhost:8080/swagger-ui/index.html
     @Autowired
     IQueryDatabase queryDatabase;
     @Autowired
     IRoute route;
-    @Autowired
-    ITransferCost transferCost;
 
     @Operation(
-            summary = "Calculates the cheapest transport type for the specified journey.",
-            description = "Calculates the cost of a one-way transfer for a personal transport or UTS transport. Returns the cheapest transport method, and the calculated journey cost. Can optionally take passenger number, and parking days."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Your request is being processed."
-    )
-
-    @GetMapping("/transport/{distance}")
-    public String getCheapestTransfer(
-        @PathVariable int distance,
-        @Parameter(description = "Number of passengers") @RequestParam(required = false) int passengers,
-        @Parameter(description = "Number of parking days") @RequestParam(required = false) int parking) {
-
-        TransferInfo info = transferCost.cheapestTransfer(distance, passengers, parking);
-
-        return "The cheapest transportation method for your journey is " + info.getType() + " and comes to £" + info.getCost() +".\n\nThank you for using our service, have a lovely trip.";
-        }
-
-    @Operation(
-            summary = "Fetch list of accelerators.",
-            description = "Returns information of all accelerators and their connections."
+            summary = "View a list of all accelerators.",
+            description = "Returns ID, name, and connections (each with name and distance in hu) of all accelerators."
     )
     @ApiResponse(
             responseCode = "200",
@@ -66,8 +44,8 @@ public class API {
     }
 
     @Operation(
-            summary = "Fetch information for a specific accelerator.",
-            description = "Return connections of a specific accelerator."
+            summary = "View information for a specific accelerator.",
+            description = "See a specific accelerator's ID, name, and connections (by name and distance in hu)."
     )
     @ApiResponse(
             responseCode = "200",
@@ -92,8 +70,8 @@ public class API {
     }
 
     @Operation(
-            summary = "Calculate cheapest journey.",
-            description = "Evaluates shortest path between accelerator stations and returns the route."
+            summary = "Calculate cheapest journey between accelerators.",
+            description = "Evaluates the shortest path between accelerator stations and returns the route."
     )
     @ApiResponse(
             responseCode = "200",
