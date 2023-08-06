@@ -108,7 +108,7 @@ public class AcceleratorAPI {
             for (String accelerator : routeAccelerators) {
                 response += accelerator + " > ";
             }
-            response += "FINISH\n\n.";
+            response += "FINISH\n\n";
             String currency = format("%.2f", route.getCost());
             response += "The cost of this journey is £" + currency + "\n\nThank you for using our service, have a lovely trip.";
 

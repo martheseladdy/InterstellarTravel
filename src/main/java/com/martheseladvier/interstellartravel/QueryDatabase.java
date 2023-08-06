@@ -30,7 +30,7 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
         try {
 
         dynamo = DynamoDbClient.builder()
-                .endpointOverride(URI.create("http://localhost:8000"))
+                .endpointOverride(URI.create("http://host.docker.internal:8000"))
                 .region(Region.EU_WEST_1)
                 .credentialsProvider(() -> AwsBasicCredentials.create("dummy", "dummy"))
                 .build();
