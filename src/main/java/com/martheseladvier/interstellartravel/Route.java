@@ -3,81 +3,95 @@ package com.martheseladvier.interstellartravel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
 public class Route implements IRoute{
 @Autowired
 IQueryDatabase queryDatabase;
-    Stack<String> route = null;
-    int routeDistance = 0;
+    Map<String, String> previousAccelerator;
+    Map<String, Integer> shortestDistanceToEachAccelerator;
+    Accelerator toAccelerator;
+
+
     //could implement a cache of source accelerators - significantly reduces the cons of the shortestRoute method
 
-    public void shortestRoute(Accelerator from, Accelerator to){
+    public void shortestRoute(Accelerator from){
         List<Accelerator> accelerators =  queryDatabase.getAllAccelerators();
-        Accelerator focus;
-        List<Connection> connections;
-        Map<String,String> previousConnection = new HashMap<>();
-        Map<String,Boolean> visited = new HashMap<>();
-        Map<String,Integer> distances = new HashMap<>();
+        Accelerator focus = from;
+        Accelerator consider;
+        Map<String, String> previousAccelerator = new HashMap<>();
+        Map<String, Integer> shortestDistanceToEachAccelerator = new HashMap<>();
 
-        for(Accelerator accel : accelerators){
-            if (accel.getId().equalsIgnoreCase(from.getId())){
-                focus = accel;
-                connections = focus.getConnections();
-                for(Connection conn: connections){
-                    visited.put(conn.getId(), false);
-                    previousConnection.put(conn.getId(), null);
-                }
-                distances.put(focus.getId(), 0);
+        int shortestDistance;
 
-                for(int i = 0; i < visited.size(); i++){
-                    int shortestDistance = 999;
-                    for(Connection conn : connections){
-                        if(conn.getDistance() <= shortestDistance && !visited.get(conn.getId())){
-                            shortestDistance = conn.getDistance();
-                            focus = conn; //when this stops looping, the next focus accelerator will be the next connection with the shortest distance
-                        }
-                    }
-                    visited.put(focus.getId(), true);
+        LinkedList<String> unvisitedAccelerators = new LinkedList<>();
 
-                    List<Connection> conns = focus.getConnections();
-                    for(Connection conn : conns){
-                        if(!visited.get(conn.getId())){
-                            int contenderDistance = distances.get(focus.getId()) + conn.getDistance();
-                            if(contenderDistance < distances.get(conn.getId())){
-                                distances.put(conn.getId(), contenderDistance);
-                                previousConnection.put(conn.getId(), focus.getId());
-                            }
-                        }
+        // Initialize distances and previousNodes
+        for(Accelerator accelerator : accelerators){
+            shortestDistanceToEachAccelerator.put(accelerator.getId(), Integer.MAX_VALUE);
+            previousAccelerator.put(accelerator.getId(), null);
+            unvisitedAccelerators.add(accelerator.getId());
+        }
+        shortestDistanceToEachAccelerator.put(from.getId(), 0);
+
+        while(!unvisitedAccelerators.isEmpty()){
+
+                shortestDistance = Integer.MAX_VALUE;
+
+                for(String acceleratorId : unvisitedAccelerators){
+                    consider = queryDatabase.getAccelerator(acceleratorId);
+                    int considerDistance = shortestDistanceToEachAccelerator.get(consider.getId());
+                    if(considerDistance < shortestDistance){
+                        shortestDistance = considerDistance;
+                        focus = consider;
+
                     }
                 }
-            }
+                if(focus == null){
+                  break;
+                }
+                unvisitedAccelerators.remove(focus.getId());
+
+
+                for(Connection connection : focus.getConnections()){ //try or repalce with focus.getConnections(queryDatabse.getAccelerator(focus.getId()));
+                    int considerDistance = shortestDistanceToEachAccelerator.get(focus.getId()) + connection.getDistance();
+                    if(considerDistance < shortestDistanceToEachAccelerator.get(connection.getId())){
+                        shortestDistanceToEachAccelerator.put(connection.getId(), considerDistance);
+                        previousAccelerator.put(connection.getId(), focus.getId());
+                    }
+                }
+
         }
-
-        routeDistance = distances.get(to.getId());
-
-        String next = to.getId();
-        Stack<String> calculatedRoute = new Stack();
-
-        while(next != null){
-            calculatedRoute.push(next);
-            next = previousConnection.get(next);
-        }
-
-        route = calculatedRoute;
+        this.previousAccelerator = previousAccelerator;
+        this.shortestDistanceToEachAccelerator = shortestDistanceToEachAccelerator;
     }
 
-    public List<String> getRoute(){
-        List<String> routeAccelerators = new ArrayList<>();
-        for(String acceleratorId : route){
-            routeAccelerators.add(route.pop());
+    public List<String> getRoute(Accelerator from, Accelerator to){
+        this.toAccelerator = to;
+        shortestRoute(from);
+        // Reconstruct the shortest path from startNode to endNode
+        List<String> route = new ArrayList<>();
+        String focusId = to.getId();
+        System.out.println(focusId);
+        while (focusId != null){
+            route.add(focusId);
+            focusId = previousAccelerator.get(focusId);
         }
-        return routeAccelerators;
+        Collections.reverse(route);
+
+        return route;
     }
 
     public double getCost(){
-        double cost = routeDistance * 0.45;
+
+        double cost = shortestDistanceToEachAccelerator.get(toAccelerator.getId()) * 0.10;
+
+        BigDecimal currencyFormat = new BigDecimal(cost).setScale(2, RoundingMode.HALF_UP);
+        cost = currencyFormat.doubleValue();
         return cost;
     }
 

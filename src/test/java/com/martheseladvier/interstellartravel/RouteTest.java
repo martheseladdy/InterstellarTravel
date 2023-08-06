@@ -1,39 +1,78 @@
 package com.martheseladvier.interstellartravel;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class RouteTest {
-    Route route = new Route();
-    public List<Accelerator> testShortestRoute(){
+    @Mock
+    private IQueryDatabase queryDatabase;
 
-        List<Connection> connectionSol = new ArrayList<>(Arrays.asList(
-                new Connection("RAN", "Ran", 100),
-                new Connection("PRX", "Proxima", 90),
-                new Connection("SIR", "Sirius", 100),
-                new Connection("ARC", "Arrcturus", 200),
-                new Connection("ALD", "Aldermain", 250)
+    @InjectMocks
+    Route route;
+    @Test
+    public void testShortestRoute(){
+
+        List<Connection> connectionStart = new ArrayList<>(Arrays.asList(
+                new Connection("ONE", "One", 1),
+                new Connection("TWO", "Two", 100)
         ));
 
-        Accelerator acceleratorSol = new Accelerator("SOL", "Sol", connectionSol);
+        Accelerator acceleratorStart = new Accelerator("STA", "Start", connectionStart);
 
 
-        List<Connection> connectionAls = new ArrayList<>(Arrays.asList(
-                new Connection("ALT", "Altair", 1),
-                new Connection("ALD", "Aldermain", 1)
+        List<Connection> connectionOne = new ArrayList<>(Arrays.asList(
+                new Connection("TWO", "Two", 1),
+                new Connection("THR", "Three", 100)
         ));
 
-        Accelerator acceleratorAls = new Accelerator("ALS", "Alshain", connectionAls);
+        Accelerator acceleratorOne = new Accelerator("ONE", "One", connectionOne);
 
-        route.shortestRoute(acceleratorSol, acceleratorAls);
+        List<Connection> connectionTwo = new ArrayList<>(Arrays.asList(
+                new Connection("ONE", "One", 3)
+        ));
 
-        List<String> expectedRoute = new ArrayList(Arrays.asList("SOL", "ARC", "DEN", "FOM", "ALS"));
-        assertEquals(expectedRoute,route.getRoute());
-        assertEquals(33.7,route.getCost());
+        Accelerator acceleratorTwo = new Accelerator("TWO", "Two", connectionTwo);
 
 
-        return null;
+        List<Connection> connectionThree = new ArrayList<>(Arrays.asList(
+                new Connection("TWO", "Two", 2),
+                new Connection("FIN", "Finish", 10)
+        ));
+
+        Accelerator acceleratorThree = new Accelerator("THR", "Three", connectionThree);
+
+
+        List<Connection> connectionFinish = new ArrayList<>(Arrays.asList(
+                new Connection("TWO", "Two", 350),
+                new Connection("STA", "Start", 800)
+        ));
+
+        Accelerator acceleratorFinish = new Accelerator("FIN", "Finish", connectionFinish);
+
+        List<Accelerator> allAccelerators = new ArrayList<>(Arrays.asList(acceleratorStart, acceleratorOne, acceleratorTwo, acceleratorThree, acceleratorFinish));
+
+        when(queryDatabase.getAllAccelerators()).thenReturn(allAccelerators);
+        when(queryDatabase.getAccelerator("ONE")).thenReturn(acceleratorOne);
+        when(queryDatabase.getAccelerator("TWO")).thenReturn(acceleratorTwo);
+        when(queryDatabase.getAccelerator("THR")).thenReturn(acceleratorThree);
+        when(queryDatabase.getAccelerator("FIN")).thenReturn(acceleratorFinish);
+        when(queryDatabase.getAccelerator("STA")).thenReturn(acceleratorFinish);
+
+
+        List<String> expectedRoute = new ArrayList<>(Arrays.asList("STA", "ONE", "THR", "FIN"));
+        assertEquals(expectedRoute,route.getRoute(acceleratorStart, acceleratorFinish));
+        assertEquals(11.1,route.getCost());
+
+
     }
 
 

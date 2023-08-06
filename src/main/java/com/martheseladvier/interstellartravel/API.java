@@ -103,17 +103,17 @@ public class API {
 
     public String getCheapestRoute(
             @PathVariable String acceleratorID,
-            @PathVariable String id){
-        Accelerator from = queryDatabase.getAccelerator(id);
-        Accelerator to = queryDatabase.getAccelerator(id);
-        route.shortestRoute(from, to);
+            @PathVariable String targetAcceleratorID){
+        Accelerator from = queryDatabase.getAccelerator(acceleratorID);
+        Accelerator to = queryDatabase.getAccelerator(targetAcceleratorID);
 
-        List<String> routeAccelerators = route.getRoute();
+        List<String> routeAccelerators = route.getRoute(from, to);
         String response = "START > ";
         for(String accelerator : routeAccelerators){
             response += accelerator + " > ";
         }
-        response += "FINISH\n\nThank you for using our service, have a lovely trip.";
+        response += "FINISH\n\n.";
+        response += "The cost of this journey is £" + route.getCost() + "\n\nThank you for using our service, have a lovely trip.";
 
         return response;
     }
