@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class QueryDatabaseTest {
 
     @Test
-    public void testGetAccelerator(){
+    public void testGetAccelerator() throws Exception {
 
         //returrn, change this either to integration test or implement embedded in-memory H2 database endpoint
         QueryDatabase database = Mockito.mock(QueryDatabase.class); //create mock database
@@ -24,13 +24,12 @@ public class QueryDatabaseTest {
                 () -> assertEquals(accelerator.id, "SOL"),
                 () -> assertEquals(accelerator.name, "Sol"),
                 () -> assertEquals(accelerator.connections, expectedConnections)
-               // () -> assertThrows(Exception.class, () -> database.getAccelerator("PROXIMA"))
                 );
         verify(database).getAccelerator("SOL");
     }
 
     @Test
-    public void testGetAllAccelerators(){
+    public void testGetAllAccelerators() throws Exception {
         QueryDatabase database = Mockito.mock(QueryDatabase.class); //create mock database
 
         List<Connection> connectionSol = new ArrayList<>(Arrays.asList(

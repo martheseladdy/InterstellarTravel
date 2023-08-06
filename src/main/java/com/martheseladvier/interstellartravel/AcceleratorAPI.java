@@ -27,20 +27,27 @@ public class AcceleratorAPI {
     )
 
     @GetMapping("/accelerators")
-    public String getAccelerators(){
-        String response = "";
-        List<Accelerator> accelerators = queryDatabase.getAllAccelerators();
-        for(Accelerator acc : accelerators){
-            response += "Accelerator: \nid: " +acc.getId() + "\nname: " + acc.getName() + "\nConnections: ";
-            List<Connection> connections = acc.getConnections();
-            for(Connection conn : connections){
-                response+="\n   " + conn.getName() + ": " + conn.getDistance() + " hu";
+    public String getAccelerators()throws Exception{
+        try {
+            String response = "";
+            List<Accelerator> accelerators = queryDatabase.getAllAccelerators();
+            //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return a list of accelerators
+
+            for (Accelerator acc : accelerators) {
+                response += "Accelerator: \nid: " + acc.getId() + "\nname: " + acc.getName() + "\nConnections: ";
+                List<Connection> connections = acc.getConnections();
+                for (Connection conn : connections) {
+                    response += "\n   " + conn.getName() + ": " + conn.getDistance() + " hu";
+                }
             }
+
+            response += "\n\nThank you for using our service, have a lovely trip";
+
+            return response;
         }
-
-        response += "\n\nThank you for using our service, have a lovely trip";
-
-        return response;
+        catch (Exception e) {
+        return "Error: " + e.toString();
+        }
     }
 
     @Operation(
@@ -54,19 +61,25 @@ public class AcceleratorAPI {
 
     @GetMapping("/accelerators/{acceleratorID}")
     public String getAcceleratorByID(
-            @PathVariable String acceleratorID){
+            @PathVariable String acceleratorID) throws Exception{
+        try {
 
-        Accelerator accelerator = queryDatabase.getAccelerator(acceleratorID);
+            Accelerator accelerator = queryDatabase.getAccelerator(acceleratorID);
+            //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return an Accelerator object
 
-        String response = "Accelerator: \nid: " +accelerator.getId() + "\nname: " + accelerator.getName() + "\nConnections: ";
-        List<Connection> connections = accelerator.getConnections();
-        for(Connection conn : connections){
-            response+="\n   " + conn.getName() + ": " + conn.getDistance() + " hu";
+            String response = "Accelerator: \nid: " + accelerator.getId() + "\nname: " + accelerator.getName() + "\nConnections: ";
+            List<Connection> connections = accelerator.getConnections();
+            for (Connection conn : connections) {
+                response += "\n   " + conn.getName() + ": " + conn.getDistance() + " hu";
+            }
+
+            response += "\n\nThank you for using our service, have a lovely trip.";
+
+            return response;
         }
-
-        response += "\n\nThank you for using our service, have a lovely trip.";
-
-        return response;
+        catch (Exception e){
+            return "Error: " + e.toString();
+        }
     }
 
     @Operation(
@@ -81,19 +94,26 @@ public class AcceleratorAPI {
 
     public String getCheapestRoute(
             @PathVariable String acceleratorID,
-            @PathVariable String targetAcceleratorID){
-        Accelerator from = queryDatabase.getAccelerator(acceleratorID);
-        Accelerator to = queryDatabase.getAccelerator(targetAcceleratorID);
+            @PathVariable String targetAcceleratorID) throws Exception{
+        try {
+            Accelerator from = queryDatabase.getAccelerator(acceleratorID);
+            Accelerator to = queryDatabase.getAccelerator(targetAcceleratorID);
 
-        List<String> routeAccelerators = route.getRoute(from, to);
-        String response = "START > ";
-        for(String accelerator : routeAccelerators){
-            response += accelerator + " > ";
+            List<String> routeAccelerators = route.getRoute(from, to);
+            //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return a route list
+
+            String response = "START > ";
+            for (String accelerator : routeAccelerators) {
+                response += accelerator + " > ";
+            }
+            response += "FINISH\n\n.";
+            response += "The cost of this journey is £" + route.getCost() + "\n\nThank you for using our service, have a lovely trip.";
+
+            return response;
         }
-        response += "FINISH\n\n.";
-        response += "The cost of this journey is £" + route.getCost() + "\n\nThank you for using our service, have a lovely trip.";
-
-        return response;
+        catch (Exception e){
+            return "Error: " + e.toString();
+        }
     }
 
 }

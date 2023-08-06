@@ -19,7 +19,8 @@ IQueryDatabase queryDatabase;
 
     //could implement a cache of source accelerators - significantly reduces the cons of the shortestRoute method
 
-    public void shortestRoute(Accelerator from){
+    public void shortestRoute(Accelerator from) throws Exception{
+        try{
         List<Accelerator> accelerators =  queryDatabase.getAllAccelerators();
         Accelerator focus = from;
         Accelerator consider;
@@ -68,31 +69,47 @@ IQueryDatabase queryDatabase;
         }
         this.previousAccelerator = previousAccelerator;
         this.shortestDistanceToEachAccelerator = shortestDistanceToEachAccelerator;
-    }
-
-    public List<String> getRoute(Accelerator from, Accelerator to){
-        this.toAccelerator = to;
-        shortestRoute(from);
-        // Reconstruct the shortest path from startNode to endNode
-        List<String> route = new ArrayList<>();
-        String focusId = to.getId();
-        System.out.println(focusId);
-        while (focusId != null){
-            route.add(focusId);
-            focusId = previousAccelerator.get(focusId);
         }
-        Collections.reverse(route);
-
-        return route;
+        catch (Exception e){
+            System.out.println(e.toString());
+            throw e;
+        }
     }
 
-    public double getCost(){
+    public List<String> getRoute(Accelerator from, Accelerator to) throws Exception{
+        try {
+            this.toAccelerator = to;
+            shortestRoute(from);
+            // Reconstruct the shortest path from startNode to endNode
+            List<String> route = new ArrayList<>();
+            String focusId = to.getId();
+            System.out.println(focusId);
+            while (focusId != null) {
+                route.add(focusId);
+                focusId = previousAccelerator.get(focusId);
+            }
+            Collections.reverse(route);
 
-        double cost = shortestDistanceToEachAccelerator.get(toAccelerator.getId()) * 0.10;
+            return route;
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+            throw e;
+        }
+        }
 
-        BigDecimal currencyFormat = new BigDecimal(cost).setScale(2, RoundingMode.HALF_UP);
-        cost = currencyFormat.doubleValue();
-        return cost;
+    public double getCost() throws Exception{
+        try {
+            double cost = shortestDistanceToEachAccelerator.get(toAccelerator.getId()) * 0.10;
+
+            BigDecimal currencyFormat = new BigDecimal(cost).setScale(2, RoundingMode.HALF_UP);
+            cost = currencyFormat.doubleValue();
+            return cost;
+        }
+        catch (Exception e){
+            System.out.println(e.toString());
+            throw e;
+        }
     }
 
 

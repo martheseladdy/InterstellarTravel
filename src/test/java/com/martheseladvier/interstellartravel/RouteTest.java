@@ -19,7 +19,7 @@ class RouteTest {
     @InjectMocks
     Route route;
     @Test
-    public void testShortestRoute(){
+    public void testShortestRoute() throws Exception {
 
         List<Connection> connectionStart = new ArrayList<>(Arrays.asList(
                 new Connection("ONE", "One", 1),
@@ -69,9 +69,16 @@ class RouteTest {
 
 
         List<String> expectedRoute = new ArrayList<>(Arrays.asList("STA", "ONE", "THR", "FIN"));
-        assertEquals(expectedRoute,route.getRoute(acceleratorStart, acceleratorFinish));
-        assertEquals(11.1,route.getCost());
-
+        assertAll("Transfer tests",
+                () -> assertEquals(expectedRoute,route.getRoute(acceleratorStart, acceleratorFinish)),
+                () -> assertEquals(11.1,route.getCost()),
+                () -> assertThrows(Exception.class, () -> {
+                    route.getRoute(null, null);
+                    }),
+                () -> assertThrows(Exception.class, () -> {
+                    route.getCost();
+                })
+        );
 
     }
 

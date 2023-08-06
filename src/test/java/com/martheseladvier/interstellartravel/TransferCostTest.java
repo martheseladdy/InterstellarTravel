@@ -18,33 +18,25 @@ public class TransferCostTest {
                 () -> assertEquals(18.0, transferCost.personalTransfer(new TransferInfo("personal",10,myNull, 3)).getCost()),
                 () -> assertEquals(23.0, transferCost.personalTransfer(new TransferInfo("personal",10,3, 4)).getCost()),
                 () -> assertEquals(6.0, transferCost.personalTransfer(new TransferInfo("personal",10,5, myNull)).getCost()),
-                () -> assertEquals(46.0, transferCost.personalTransfer(new TransferInfo("personal",10,5, 4)).getCost())
-              //  () ->  assertThrows(Exception.class, () -> {
-               //     transferCost.personalTransfer(new TransferInfo("personal",myNull,5, 4));
-              //  }),
-              //  () ->  assertThrows(Exception.class, () -> {
-                  //          transferCost.personalTransfer(new TransferInfo("personal",myNull,myNull, myNull));
-              //          }),
-              //  () ->  assertThrows(Exception.class, () -> {
-              //              transferCost.personalTransfer(new TransferInfo("personal",0,5, 4));
-              //          })
+                () -> assertEquals(46.0, transferCost.personalTransfer(new TransferInfo("personal",10,5, 4)).getCost()),
+                () ->  assertThrows(Exception.class, () -> {
+                    transferCost.personalTransfer(new TransferInfo("personal",myNull,5, 4));
+                })//,
+//scope determinant if considered an error or if happy to return a zero
+               // () ->  assertThrows(Exception.class, () -> {
+                 //           transferCost.personalTransfer(new TransferInfo("personal",0,5, 4));
+                   //     })
                          );
     }
     @Test
     public void testHtcTransfer(){
         assertAll( "HTC Transfer tests",
-                () -> assertEquals(4.5, transferCost.htcTransfer(new TransferInfo("htc",10,myNull)).getCost()),  //4.5
-                () -> assertEquals(4.5, transferCost.htcTransfer(new TransferInfo("htc",10,3)).getCost()) , //4.5
-                () -> assertEquals(9.0, transferCost.htcTransfer(new TransferInfo("htc",10,6)).getCost()) //9
-             //   () ->  assertThrows(Exception.class, () -> {
-                //    transferCost.htcTransfer(new TransferInfo("htc",myNull,5));
-              //  })
-              //  () ->  assertThrows(Exception.class, () -> {
-              //      transferCost.htcTransfer(new TransferInfo("htc",myNull,myNull));
-             //   }),
-            //    () ->  assertThrows(Exception.class, () -> {
-            //        transferCost.htcTransfer(new TransferInfo("htc",0,6));
-            //    })
+                () -> assertEquals(4.5, transferCost.htcTransfer(new TransferInfo("htc",10,myNull)).getCost()),
+                () -> assertEquals(4.5, transferCost.htcTransfer(new TransferInfo("htc",10,3)).getCost()) ,
+                () -> assertEquals(9.0, transferCost.htcTransfer(new TransferInfo("htc",10,6)).getCost()),
+                () ->  assertThrows(Exception.class, () -> {
+                    transferCost.htcTransfer(new TransferInfo("htc",myNull,5));
+                })
         );
     }
 
@@ -57,7 +49,6 @@ public class TransferCostTest {
                 () ->  assertEquals(30, transferCost.cheapestTransfer(100, 1, null).getCost()),
                 () ->  assertEquals("htc", transferCost.cheapestTransfer(100, 5, 3).getType()),
                 () ->  assertEquals(45, transferCost.cheapestTransfer(100, 5, 3).getCost())
-
                 );
 
 
@@ -88,6 +79,4 @@ public class TransferCostTest {
                 })
                 );
     }
-
-    //test get cost
 }

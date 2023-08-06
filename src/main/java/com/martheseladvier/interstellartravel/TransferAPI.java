@@ -28,11 +28,16 @@ public class TransferAPI {
     public String getCheapestTransfer(
             @PathVariable int distance,
             @Parameter(description = "Number of passengers") @RequestParam(required = false) Integer passengers,
-            @Parameter(description = "Number of parking days") @RequestParam(required = false) Integer parking) {
+            @Parameter(description = "Number of parking days") @RequestParam(required = false) Integer parking) throws Exception {
+        try {
+            TransferInfo info = transferCost.cheapestTransfer(distance, passengers, parking);
+//This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return a TransferInfo object
+            return "The cheapest transportation method for your journey is " + info.getType() + " and comes to £" + info.getCost() + ".\n\nThank you for using our service, have a lovely trip.";
+        } catch (Exception e) {
+            return "Error: " + e.toString();
+        }
 
-        TransferInfo info = transferCost.cheapestTransfer(distance, passengers, parking);
 
-        return "The cheapest transportation method for your journey is " + info.getType() + " and comes to £" + info.getCost() +".\n\nThank you for using our service, have a lovely trip.";
     }
 
 

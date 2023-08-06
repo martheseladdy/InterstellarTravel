@@ -25,26 +25,38 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
     Map<String, String> dictionary = new HashMap<>();
 
     @Autowired
-    public QueryDatabase(){
-        setUp();
-        makeDictionary();
+    public QueryDatabase()throws Exception{
+        try {
+            setUp();
+            makeDictionary();
+        }
+        catch (Exception e){
+            System.out.println(e.toString());
+            throw e;
+        }
        // dynamo.close();
     }
 
-    public void setUp(){
+    public void setUp() throws Exception{
+        try {
 
         dynamo = DynamoDbClient.builder()
                 .endpointOverride(URI.create("http://localhost:8000"))
                 .region(Region.EU_WEST_1)
                 .credentialsProvider(() -> AwsBasicCredentials.create("dummy", "dummy"))
                 .build();
-
+        }
+        catch (Exception e){
+            System.out.println(e.toString());
+            throw e;
+        }
     }
 
     public void close(){
          dynamo.close();
     }
-    private void makeDictionary(){
+    private void makeDictionary() throws Exception{
+        try{
         //iterate through all records and add the id with the corresponding name as a key value pair into the dictionary
         ScanRequest req = ScanRequest.builder()
                 .tableName("accelerator")
@@ -61,10 +73,15 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
             dictionary.put(id, name);
 
         }
-
+    }
+        catch (Exception e){
+        System.out.println(e.toString());
+        throw e;
+    }
     }
 
-    public Accelerator getAccelerator(String id){
+    public Accelerator getAccelerator(String id) throws Exception{
+        try {
         String accName = "";
         String accId = "";
         List<Connection> connections;
@@ -104,11 +121,20 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
 
 
         Accelerator accelerator = new Accelerator(accId, accName, connectionsList);
+        if(accId == null || accName == null){
+            throw new Exception("Database access error");
+        }
 
         return accelerator;
     }
+        catch (Exception e){
+        System.out.println(e.toString());
+        throw e;
+    }
+    }
 
-    public List<Accelerator> getAllAccelerators(){
+    public List<Accelerator> getAllAccelerators() throws Exception{
+        try {
         ScanRequest req = ScanRequest.builder()
                 .tableName("accelerator")
                 .build();
@@ -141,11 +167,19 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
             }
 
             Accelerator accelerator = new Accelerator(accId, accName, connectionsList);
+            if(accId == null || accName == null){
+                throw new Exception("Database access error");
+            }
             allAccelerators.add(accelerator);
 
         }
 
 
         return allAccelerators;
+        }
+        catch (Exception e){
+            System.out.println(e.toString());
+            throw e;
+        }
     }
 }
