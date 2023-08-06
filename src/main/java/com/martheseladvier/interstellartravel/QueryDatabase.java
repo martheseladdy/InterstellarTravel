@@ -2,19 +2,9 @@ package com.martheseladvier.interstellartravel;
 import java.net.URI;
 import java.util.*;
 import java.io.Serializable;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -34,7 +24,6 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
             System.out.println(e.toString());
             throw e;
         }
-       // dynamo.close();
     }
 
     public void setUp() throws Exception{
@@ -77,60 +66,58 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
         catch (Exception e){
         System.out.println(e.toString());
         throw e;
-    }
+        }
     }
 
     public Accelerator getAccelerator(String id) throws Exception{
         try {
-        String accName = "";
-        String accId = "";
-        List<Connection> connections;
+            String accName = "";
+            String accId = "";
+            List<Connection> connections;
 
+            GetItemRequest req = GetItemRequest.builder()
+                    .tableName("accelerator")
+                    .key(Collections.singletonMap("id", AttributeValue.builder().s(id).build()))
+                    .build();
+            GetItemResponse resp = dynamo.getItem(req);
 
-        GetItemRequest req = GetItemRequest.builder()
-                .tableName("accelerator")
-                .key(Collections.singletonMap("id", AttributeValue.builder().s(id).build()))
-                .build();
-        GetItemResponse resp = dynamo.getItem(req);
+            Map<String, AttributeValue> itemMap = resp.item();
+            System.out.println(resp.item()); //to remove
 
-        Map<String, AttributeValue> itemMap = resp.item();
-        System.out.println(resp.item()); //to remove
+            accId = itemMap.get("id").s();
 
-        accId = itemMap.get("id").s();
+            accName = itemMap.get("name").s();
 
-        accName = itemMap.get("name").s();
+            List<AttributeValue> connList = itemMap.get("connections").l();
 
-        List<AttributeValue> connList = itemMap.get("connections").l();
+            List<Connection> connectionsList = new ArrayList<>();
 
-        List<Connection> connectionsList = new ArrayList<>();
+            for (AttributeValue conn : connList) {
 
+                Map<String, AttributeValue> connectionMap = conn.m();
 
-        for (AttributeValue conn : connList) {
+                AttributeValue connectionIdValue = connectionMap.get("id");
+                String connectionId = connectionIdValue.s();
 
-            Map<String, AttributeValue> connectionMap = conn.m();
+                AttributeValue huValue = connectionMap.get("hu");
+                int distance = Integer.valueOf(huValue.n());
 
-            AttributeValue connectionIdValue = connectionMap.get("id");
-            String connectionId = connectionIdValue.s();
+                Connection connection = new Connection(connectionId, dictionary.get(connectionId.toUpperCase()), distance);
+                connectionsList.add(connection);
+            }
 
-            AttributeValue huValue = connectionMap.get("hu");
-            int distance = Integer.valueOf(huValue.n());
+            Accelerator accelerator = new Accelerator(accId, accName, connectionsList);
+            if(accId == null || accName == null){
+                throw new Exception("Database access error");
+            }
 
-            Connection connection = new Connection(connectionId, dictionary.get(connectionId.toUpperCase()), distance);
-            connectionsList.add(connection);
+            return accelerator;
+
         }
-
-
-        Accelerator accelerator = new Accelerator(accId, accName, connectionsList);
-        if(accId == null || accName == null){
-            throw new Exception("Database access error");
-        }
-
-        return accelerator;
-    }
         catch (Exception e){
         System.out.println(e.toString());
         throw e;
-    }
+         }
     }
 
     public List<Accelerator> getAllAccelerators() throws Exception{
@@ -138,7 +125,6 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
         ScanRequest req = ScanRequest.builder()
                 .tableName("accelerator")
                 .build();
-
 
         ScanResponse resp = dynamo.scan(req);
 
@@ -156,9 +142,7 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
             for (AttributeValue conn : connections) {
 
                 Map<String, AttributeValue> connectionMap = conn.m();
-
                 String connectionId = connectionMap.get("id").s();
-
                 AttributeValue huValue = connectionMap.get("hu");
                 int distance = Integer.valueOf(huValue.n());
 
@@ -167,15 +151,17 @@ public class QueryDatabase implements IQueryDatabase, Serializable{
             }
 
             Accelerator accelerator = new Accelerator(accId, accName, connectionsList);
+
             if(accId == null || accName == null){
                 throw new Exception("Database access error");
             }
+
             allAccelerators.add(accelerator);
 
         }
 
-
         return allAccelerators;
+
         }
         catch (Exception e){
             System.out.println(e.toString());

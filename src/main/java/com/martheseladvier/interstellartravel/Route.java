@@ -1,11 +1,8 @@
 package com.martheseladvier.interstellartravel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -16,8 +13,7 @@ IQueryDatabase queryDatabase;
     Map<String, Integer> shortestDistanceToEachAccelerator;
     Accelerator toAccelerator;
 
-
-    //could implement a cache of source accelerators - significantly reduces the cons of the shortestRoute method
+    //could implement a cache of start accelerators - significantly reduces the cons of the shortestRoute method
 
     public void shortestRoute(Accelerator from) throws Exception{
         try{
@@ -26,12 +22,10 @@ IQueryDatabase queryDatabase;
         Accelerator consider;
         Map<String, String> previousAccelerator = new HashMap<>();
         Map<String, Integer> shortestDistanceToEachAccelerator = new HashMap<>();
-
         int shortestDistance;
-
         LinkedList<String> unvisitedAccelerators = new LinkedList<>();
 
-        // Initialize distances and previousNodes
+        //initialising
         for(Accelerator accelerator : accelerators){
             shortestDistanceToEachAccelerator.put(accelerator.getId(), Integer.MAX_VALUE);
             previousAccelerator.put(accelerator.getId(), null);
@@ -42,7 +36,7 @@ IQueryDatabase queryDatabase;
         while(!unvisitedAccelerators.isEmpty()){
 
                 shortestDistance = Integer.MAX_VALUE;
-
+                //find closest unvisited/next focus
                 for(String acceleratorId : unvisitedAccelerators){
                     consider = queryDatabase.getAccelerator(acceleratorId);
                     int considerDistance = shortestDistanceToEachAccelerator.get(consider.getId());
@@ -56,9 +50,8 @@ IQueryDatabase queryDatabase;
                   break;
                 }
                 unvisitedAccelerators.remove(focus.getId());
-
-
-                for(Connection connection : focus.getConnections()){ //try or repalce with focus.getConnections(queryDatabse.getAccelerator(focus.getId()));
+                //find closet connection to current focus
+                for(Connection connection : focus.getConnections()){
                     int considerDistance = shortestDistanceToEachAccelerator.get(focus.getId()) + connection.getDistance();
                     if(considerDistance < shortestDistanceToEachAccelerator.get(connection.getId())){
                         shortestDistanceToEachAccelerator.put(connection.getId(), considerDistance);
@@ -67,8 +60,10 @@ IQueryDatabase queryDatabase;
                 }
 
         }
+
         this.previousAccelerator = previousAccelerator;
         this.shortestDistanceToEachAccelerator = shortestDistanceToEachAccelerator;
+
         }
         catch (Exception e){
             System.out.println(e.toString());
@@ -80,7 +75,7 @@ IQueryDatabase queryDatabase;
         try {
             this.toAccelerator = to;
             shortestRoute(from);
-            // Reconstruct the shortest path from startNode to endNode
+            // Reconstruct route from finishing accelerator backwards
             List<String> route = new ArrayList<>();
             String focusId = to.getId();
             System.out.println(focusId);
@@ -96,7 +91,7 @@ IQueryDatabase queryDatabase;
             System.out.println(e.toString());
             throw e;
         }
-        }
+    }
 
     public double getCost() throws Exception{
         try {
@@ -111,6 +106,5 @@ IQueryDatabase queryDatabase;
             throw e;
         }
     }
-
 
 }

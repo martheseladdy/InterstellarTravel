@@ -36,9 +36,6 @@ public class TransferAPI {
         } catch (Exception e) {
             return "Error: " + e.toString();
         }
-
-
     }
-
 
 }

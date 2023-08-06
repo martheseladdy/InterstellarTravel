@@ -25,21 +25,17 @@ class RouteTest {
                 new Connection("ONE", "One", 1),
                 new Connection("TWO", "Two", 100)
         ));
-
         Accelerator acceleratorStart = new Accelerator("STA", "Start", connectionStart);
-
 
         List<Connection> connectionOne = new ArrayList<>(Arrays.asList(
                 new Connection("TWO", "Two", 1),
                 new Connection("THR", "Three", 100)
         ));
-
         Accelerator acceleratorOne = new Accelerator("ONE", "One", connectionOne);
 
         List<Connection> connectionTwo = new ArrayList<>(Arrays.asList(
                 new Connection("ONE", "One", 3)
         ));
-
         Accelerator acceleratorTwo = new Accelerator("TWO", "Two", connectionTwo);
 
 
@@ -47,7 +43,6 @@ class RouteTest {
                 new Connection("TWO", "Two", 2),
                 new Connection("FIN", "Finish", 10)
         ));
-
         Accelerator acceleratorThree = new Accelerator("THR", "Three", connectionThree);
 
 
@@ -55,7 +50,6 @@ class RouteTest {
                 new Connection("TWO", "Two", 350),
                 new Connection("STA", "Start", 800)
         ));
-
         Accelerator acceleratorFinish = new Accelerator("FIN", "Finish", connectionFinish);
 
         List<Accelerator> allAccelerators = new ArrayList<>(Arrays.asList(acceleratorStart, acceleratorOne, acceleratorTwo, acceleratorThree, acceleratorFinish));
@@ -77,10 +71,8 @@ class RouteTest {
                     }),
                 () -> assertThrows(Exception.class, () -> {
                     route.getCost();
-                })
+                    })
         );
-
     }
-
 
 }

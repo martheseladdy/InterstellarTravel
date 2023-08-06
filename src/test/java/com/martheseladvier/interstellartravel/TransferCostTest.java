@@ -21,11 +21,7 @@ public class TransferCostTest {
                 () -> assertEquals(46.0, transferCost.personalTransfer(new TransferInfo("personal",10,5, 4)).getCost()),
                 () ->  assertThrows(Exception.class, () -> {
                     transferCost.personalTransfer(new TransferInfo("personal",myNull,5, 4));
-                })//,
-//scope determinant if considered an error or if happy to return a zero
-               // () ->  assertThrows(Exception.class, () -> {
-                 //           transferCost.personalTransfer(new TransferInfo("personal",0,5, 4));
-                   //     })
+                })
                          );
     }
     @Test
@@ -51,12 +47,6 @@ public class TransferCostTest {
                 () ->  assertEquals(45, transferCost.cheapestTransfer(100, 5, 3).getCost())
                 );
 
-
-
-
-
-
-
     }
 
     @Test
@@ -73,10 +63,10 @@ public class TransferCostTest {
                 () -> assertEquals(2500, transferCost.numberOfTransfers(9999, "personal")),
                 () -> assertThrows(Exception.class, () -> {
                     transferCost.numberOfTransfers(myNull, "personal");
-                }),
+                    }),
                 () -> assertThrows(Exception.class, () -> {
                     transferCost.numberOfTransfers(4, myNullString);
-                })
+                    })
                 );
     }
 }

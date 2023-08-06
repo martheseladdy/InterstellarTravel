@@ -4,7 +4,7 @@ public class Connection extends Accelerator {
 
 
     public Connection(String id, String name, int distance){
-        super(id, name, null); //confirm best practise? Also confirm how to spell practise in this context?
+        super(id, name, null);
         this.id = id;
         this.name = name;
         this.distance = distance;

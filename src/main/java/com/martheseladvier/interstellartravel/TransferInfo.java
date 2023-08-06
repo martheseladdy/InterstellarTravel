@@ -15,15 +15,12 @@ public class TransferInfo {
         this.distance = distance;
         this.passengers = passengers;
         this.parkingDays = parkingDays;
-
     }
 
     public TransferInfo(String type, int distance, Integer passengers){
         this.type = type;
         this.distance = distance;
         this.passengers = passengers;
-        this.parkingDays = parkingDays;
-
     }
     public String getType(){
         return this.type;

@@ -1,5 +1,4 @@
 package com.martheseladvier.interstellartravel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +17,6 @@ public class TransferCost implements ITransferCost{
             int distance = personalInfo.getDistance();
 
             totalCost += (double) distance * PERSONAL_FUEL_PER_AU;
-
             totalCost += (parkingDays != null) ? parkingDays * PARKING_FEE_PER_DAY : 0;
 
             if (passengers != null) {
@@ -27,7 +25,6 @@ public class TransferCost implements ITransferCost{
 
             TransferInfo personal = new TransferInfo("personal", distance, passengers, parkingDays);
             personal.setCost(totalCost);
-
 
             return personal;
         }
