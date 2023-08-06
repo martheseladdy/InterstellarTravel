@@ -41,7 +41,7 @@ public class QueryDatabaseTest {
         Accelerator accelerator3 = new Accelerator("RAN", "Ran", connectionList3);
         List<Accelerator> accelerators = new ArrayList<Accelerator>(Arrays.asList(accelerator1, accelerator2, accelerator3));
 
-        assertEquals(database.getAllAccelerators(), accelerators); //this will need editing when all the data has been entered to the official databse class
+        assertEquals(database.getAllAccelerators(), accelerators);
 
 
     }

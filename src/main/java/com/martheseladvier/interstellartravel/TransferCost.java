@@ -1,8 +1,10 @@
 package com.martheseladvier.interstellartravel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TransferCost implements ITransferCost{
+
     public static final int PERSONAL_PASSENGER_LIMIT = 4;
     public static final double PERSONAL_FUEL_PER_AU = 0.30;
     public static final double PARKING_FEE_PER_DAY = 5.0;
