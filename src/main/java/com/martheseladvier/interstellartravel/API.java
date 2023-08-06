@@ -2,13 +2,22 @@ package com.martheseladvier.interstellartravel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
 @RequestMapping("/home")
 public class API {
     //http://localhost:8080/swagger-ui/index.html
+    @Autowired
+    IQueryDatabase queryDatabase;
+    @Autowired
+    IRoute route;
+    @Autowired
+    ITransferCost transferCost;
 
     @Operation(
             summary = "Calculates the cheapest transport type for the specified journey.",
@@ -19,14 +28,15 @@ public class API {
             description = "Your request is being processed."
     )
 
-    @GetMapping("/trasport/{distance}")
+    @GetMapping("/transport/{distance}")
     public String getCheapestTransfer(
         @PathVariable int distance,
         @Parameter(description = "Number of passengers") @RequestParam(required = false) int passengers,
         @Parameter(description = "Number of parking days") @RequestParam(required = false) int parking) {
-        //call method
 
-        return "Your costs here :)";
+        TransferInfo info = transferCost.cheapestTransfer(distance, passengers, parking);
+
+        return "The cheapest transportation method for your journey is " + info.getType() + " and comes to £" + info.getCost() +".\n\nThank you for using our service, have a lovely trip.";
         }
 
     @Operation(
@@ -40,9 +50,19 @@ public class API {
 
     @GetMapping("/accelerators")
     public String getAccelerators(){
-        //call method
+        String response = "";
+        List<Accelerator> accelerators = queryDatabase.getAllAccelerators();
+        for(Accelerator acc : accelerators){
+            response += "Accelerator: \nid: " +acc.getId() + "\nname: " + acc.getName() + "\nConnections: ";
+            List<Connection> connections = acc.getConnections();
+            for(Connection conn : connections){
+                response+="\n   " + conn.getName() + ": " + conn.getDistance() + " hu";
+            }
+        }
 
-        return "All accelerators";
+        response += "\n\nThank you for using our service, have a lovely trip";
+
+        return response;
     }
 
     @Operation(
@@ -55,9 +75,20 @@ public class API {
     )
 
     @GetMapping("/accelerators/{acceleratorID}")
-    public String getAcceleratorByID(){
-        //call method
-        return "Single accelerator information";
+    public String getAcceleratorByID(
+            @PathVariable String acceleratorID){
+
+        Accelerator accelerator = queryDatabase.getAccelerator(acceleratorID);
+
+        String response = "Accelerator: \nid: " +accelerator.getId() + "\nname: " + accelerator.getName() + "\nConnections: ";
+        List<Connection> connections = accelerator.getConnections();
+        for(Connection conn : connections){
+            response+="\n   " + conn.getName() + ": " + conn.getDistance() + " hu";
+        }
+
+        response += "\n\nThank you for using our service, have a lovely trip.";
+
+        return response;
     }
 
     @Operation(
@@ -71,11 +102,20 @@ public class API {
     @GetMapping("/accelerators/{acceleratorID}/to/{targetAcceleratorID}")
 
     public String getCheapestRoute(
-            @PathVariable int acceleratorID,
-            @PathVariable int targetAcceleratorID){
-        //call method
+            @PathVariable String acceleratorID,
+            @PathVariable String id){
+        Accelerator from = queryDatabase.getAccelerator(id);
+        Accelerator to = queryDatabase.getAccelerator(id);
+        route.shortestRoute(from, to);
 
-        return "Your costs here :)";
+        List<String> routeAccelerators = route.getRoute();
+        String response = "START > ";
+        for(String accelerator : routeAccelerators){
+            response += accelerator + " > ";
+        }
+        response += "FINISH\n\nThank you for using our service, have a lovely trip.";
+
+        return response;
     }
 
 }
