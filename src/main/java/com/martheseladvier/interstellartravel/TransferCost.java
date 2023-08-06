@@ -39,7 +39,7 @@ public class TransferCost implements ITransferCost{
             totalCost = totalCost * numberOfTransfers((int) passengers, "htc");
         }
 
-        TransferInfo htc = new TransferInfo("htc ", distance, passengers);
+        TransferInfo htc = new TransferInfo("htc", distance, passengers);
         htc.setCost(totalCost);
 
         return htc;
