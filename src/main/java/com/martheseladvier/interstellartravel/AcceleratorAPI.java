@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 
 @RestController
 @RequestMapping("/UTS")
@@ -34,7 +36,7 @@ public class AcceleratorAPI {
             //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return a list of accelerators
 
             for (Accelerator acc : accelerators) {
-                response += "Accelerator: \nid: " + acc.getId() + "\nname: " + acc.getName() + "\nConnections: ";
+                response += "\nAccelerator: \nid: " + acc.getId() + "\nname: " + acc.getName() + "\nConnections: ";
                 List<Connection> connections = acc.getConnections();
                 for (Connection conn : connections) {
                     response += "\n   " + conn.getName() + ": " + conn.getDistance() + " hu";
@@ -64,7 +66,7 @@ public class AcceleratorAPI {
             @PathVariable String acceleratorID) throws Exception{
         try {
 
-            Accelerator accelerator = queryDatabase.getAccelerator(acceleratorID);
+            Accelerator accelerator = queryDatabase.getAccelerator(acceleratorID.toUpperCase());
             //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return an Accelerator object
 
             String response = "Accelerator: \nid: " + accelerator.getId() + "\nname: " + accelerator.getName() + "\nConnections: ";
@@ -96,8 +98,8 @@ public class AcceleratorAPI {
             @PathVariable String acceleratorID,
             @PathVariable String targetAcceleratorID) throws Exception{
         try {
-            Accelerator from = queryDatabase.getAccelerator(acceleratorID);
-            Accelerator to = queryDatabase.getAccelerator(targetAcceleratorID);
+            Accelerator from = queryDatabase.getAccelerator(acceleratorID.toUpperCase());
+            Accelerator to = queryDatabase.getAccelerator(targetAcceleratorID.toUpperCase());
 
             List<String> routeAccelerators = route.getRoute(from, to);
             //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return a route list
@@ -107,7 +109,8 @@ public class AcceleratorAPI {
                 response += accelerator + " > ";
             }
             response += "FINISH\n\n.";
-            response += "The cost of this journey is £" + route.getCost() + "\n\nThank you for using our service, have a lovely trip.";
+            String currency = format("%.2f", route.getCost());
+            response += "The cost of this journey is £" + currency + "\n\nThank you for using our service, have a lovely trip.";
 
             return response;
         }

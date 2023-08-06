@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 
 @RestController
 @RequestMapping("/UTS")
@@ -31,8 +33,9 @@ public class TransferAPI {
             @Parameter(description = "Number of parking days") @RequestParam(required = false) Integer parking) throws Exception {
         try {
             TransferInfo info = transferCost.cheapestTransfer(distance, passengers, parking);
+            String currency = format("%.2f", info.getCost());
 //This is decorative and only for demonstration purposes. For a true API, or an API/package intended for real use and not skills demonstration, this would simply return a TransferInfo object
-            return "The cheapest transportation method for your journey is " + info.getType() + " and comes to £" + info.getCost() + ".\n\nThank you for using our service, have a lovely trip.";
+            return "The cheapest transportation method for your journey is " + info.getType() + " and comes to £" + currency + "\n\nThank you for using our service, have a lovely trip.";
         } catch (Exception e) {
             return "Error: " + e.toString();
         }
